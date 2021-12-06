@@ -1,64 +1,52 @@
 from typing import List
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, HTTPException
 
-from app.models.models import ProductDiscount, PaymentMethod
+from app.repositories.product_discount_repository import ProductDiscountRepository
+from app.services.product_discount_service import ProductDiscountService
+from app.models.models import ProductDiscount
 from .schemas import ProductDiscountSchema, ShowProductDiscountSchema
-from sqlalchemy.orm import Session
-from app.db.db import get_db
 
 router = APIRouter()
 
 
-def check_payment_method(db, product_discount: ProductDiscountSchema):
-
-    used_method = db.query(ProductDiscount).filter_by(
-        payment_method_id=product_discount.payment_method_id
-    ).first()
-
-    enabled = db.query(PaymentMethod).filter_by(
-        id=product_discount.payment_method_id,
-        enabled=True
-    ).first()
-
-    if used_method:
-        return {"message": "Método de pagamento já utilizado para desconto!"}
-    if not enabled:
-        return {"message": "Método de pagamento inativo!"}
-
-
 @router.post('/', status_code=status.HTTP_201_CREATED)
-def create(product_discount: ProductDiscountSchema, db: Session = Depends(get_db)):
+def create(
+    product_discount: ProductDiscountSchema,
+    service: ProductDiscountService = Depends(),
+    repository: ProductDiscountRepository = Depends()
+):
+    try:
+        service.check_discount(product_discount)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
+        )
 
-    error = check_payment_method(db, product_discount)
-    if error:
-        return error
-
-    db.add(ProductDiscount(**product_discount.dict()))
-    db.commit()
+    repository.create(ProductDiscount(**product_discount.dict()))
 
 
 @router.get('/', response_model=List[ShowProductDiscountSchema])
-def index(db: Session = Depends(get_db)):
-
-    return db.query(ProductDiscount).all()
+def index(repository: ProductDiscountRepository = Depends()):
+    return repository.get_all()
 
 
 @router.put('/{id}')
-def update(id: int, product_discount: ProductDiscountSchema, db: Session = Depends(get_db)):
+def update(
+    id: int,
+    product_discount: ProductDiscountSchema,
+    service: ProductDiscountService = Depends(),
+    repository: ProductDiscountRepository = Depends()
+):
+    try:
+        service.check_discount(product_discount)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
+        )
 
-    error = check_payment_method(db, product_discount)
-    if error:
-        return error
-
-    query = db.query(ProductDiscount).filter_by(id=id)
-    query.update(product_discount.dict())
-    db.commit()
+    repository.update(id, product_discount.dict())
 
 
 @router.get('/{id}')
-def show(id: int, db: Session = Depends(get_db)):
-    return db.query(ProductDiscount).filter_by(id=id).first()
-
-# @router.delete('/{id}'):
-# def delete():
-#     pass
+def show(id: int, repository: ProductDiscountRepository = Depends()):
+    return repository.get_by_id(id)

@@ -1,7 +1,7 @@
 from sqlalchemy import Column
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import Boolean, Float, Integer, String, SmallInteger
+from sqlalchemy.sql.sqltypes import Boolean, Date, DateTime, Float, Integer, String, DateTime
 from app.db.db import Base
 
 
@@ -36,6 +36,7 @@ class Product(Base):
     technical_details = Column(String(255))
     image = Column(String(255))
     visible = Column(Boolean, default=True)
+    created_at = Column(DateTime)
 
     category_id = Column(Integer, ForeignKey(Category.id))
     category = relationship(Category)
@@ -54,3 +55,43 @@ class ProductDiscount(Base):
     payment_method = relationship(PaymentMethod)
     product_id = Column(Integer, ForeignKey(Product.id))
     product = relationship(Product)
+
+
+class Coupon(Base):
+    __tablename__ = "coupons"
+
+    id = Column(Integer, primary_key=True)
+    code = Column(String(10), unique=True)
+    expire_at = Column(DateTime)
+    limit = Column(Integer)
+    type = Column(String(15))
+    value = Column(Float(10, 2))
+
+
+class Customer(Base):
+    __tablename__ = "customers"
+
+    id = Column(Integer, primary_key=True)
+    first_name = Column(String(45))
+    last_name = Column(String(45))
+    phone_number = Column(String(15))
+    genre = Column(String(45))
+    document_id = Column(String(45))
+    birth_date = Column(Date)
+    # user_id = Column(ForeignKey())
+
+
+class Address(Base):
+    __tablename__ = "addresses"
+
+    id = Column(Integer, primary_key=True)
+    address = Column(String(255))
+    city = Column(String(45))
+    state = Column(String(2))
+    number = Column(String(10))
+    zipcode = Column(String(6))
+    neighbourhood = Column(String(45))
+    primary = Column(Boolean, default=True)
+
+    customer_id = Column(Integer, ForeignKey(Customer.id))
+    customer = relationship(Customer)
