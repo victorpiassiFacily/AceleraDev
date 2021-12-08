@@ -3,9 +3,10 @@ from fastapi import APIRouter, status, Depends
 
 from app.models.models import PaymentMethod
 from app.repositories.payment_method_repository import PaymentMethodRepository
+from app.services.auth_service import only_admin, get_user
 from .schemas import PaymentMethodSchema, ShowPaymentMethodSchema
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(only_admin)])
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED)

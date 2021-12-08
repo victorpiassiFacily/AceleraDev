@@ -1,8 +1,9 @@
 from app.models.models import Base
+from sqlalchemy.orm import Session
 
 
 class BaseRepository:
-    def __init__(self, session, model):
+    def __init__(self, session: Session, model):
         self.session = session
         self.model = model
 

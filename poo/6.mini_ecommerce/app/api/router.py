@@ -7,6 +7,7 @@ from .product_discount.views import router as product_discount_router
 from .coupon.views import router as coupon_router
 from .customer.views import router as customer_router
 from .address.views import router as address_router
+from .admin.views import router as admin_router
 
 
 router = APIRouter()
@@ -35,4 +36,8 @@ router.include_router(
 
 router.include_router(
     address_router, prefix="/address", tags=['address']
+)
+
+router.include_router(
+    admin_router, prefix="/admin", tags=['admin']
 )

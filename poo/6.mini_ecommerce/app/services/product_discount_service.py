@@ -15,11 +15,11 @@ class ProductDiscountService:
 
     def check_discount(self, product_discount: ProductDiscountSchema):
 
-        used_method = ProductDiscountRepository().get_by_payment_method_id(
+        used_method = self.product_discount_repository.get_by_payment_method_id(
             product_discount.payment_method_id
         )
 
-        enabled = PaymentMethodRepository().get_enabled_by_id(
+        enabled = self.payment_method_repository.get_enabled_by_id(
             product_discount.payment_method_id
         )
 

@@ -3,9 +3,10 @@ from fastapi import APIRouter, status, Depends
 
 from app.models.models import Supplier
 from app.repositories.supplier_repository import SupplierRepository
+from app.services.auth_service import only_admin, get_user
 from .schemas import SupplierSchema, ShowSupplierSchema
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(only_admin)])
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED)

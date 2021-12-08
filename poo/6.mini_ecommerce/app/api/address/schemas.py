@@ -8,8 +8,8 @@ class AddressSchema(BaseModel):
     number: str
     zipcode: str
     neighbourhood: str
-    primary: str
-    customer_id: str
+    primary: bool
+    customer_id: int
 
 
 class ShowAddressSchema(AddressSchema):

@@ -8,7 +8,6 @@ class UpdateCustomerSchema(BaseModel):
     birth_date: date
     phone_number: str
     genre: str
-    neighbourhood: str
 
 
 class CustomerSchema(UpdateCustomerSchema):

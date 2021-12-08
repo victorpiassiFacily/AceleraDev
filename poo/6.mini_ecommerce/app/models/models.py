@@ -1,7 +1,7 @@
 from sqlalchemy import Column
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import Boolean, Date, DateTime, Float, Integer, String, DateTime
+from sqlalchemy.sql.sqltypes import Boolean, Date, DateTime, Float, Integer, String
 from app.db.db import Base
 
 
@@ -57,15 +57,14 @@ class ProductDiscount(Base):
     product = relationship(Product)
 
 
-class Coupon(Base):
-    __tablename__ = "coupons"
+class User(Base):
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
-    code = Column(String(10), unique=True)
-    expire_at = Column(DateTime)
-    limit = Column(Integer)
-    type = Column(String(15))
-    value = Column(Float(10, 2))
+    display_name = Column(String(45))
+    email = Column(String(45), unique=True)
+    role = Column(String(15))
+    password = Column(String(45))
 
 
 class Customer(Base):
@@ -78,7 +77,8 @@ class Customer(Base):
     genre = Column(String(45))
     document_id = Column(String(45))
     birth_date = Column(Date)
-    # user_id = Column(ForeignKey())
+    user_id = Column(Integer, ForeignKey(User.id))
+    user = relationship(User)
 
 
 class Address(Base):
@@ -95,3 +95,14 @@ class Address(Base):
 
     customer_id = Column(Integer, ForeignKey(Customer.id))
     customer = relationship(Customer)
+
+
+class Coupon(Base):
+    __tablename__ = "coupons"
+
+    id = Column(Integer, primary_key=True)
+    code = Column(String(10), unique=True)
+    expire_at = Column(DateTime)
+    limit = Column(Integer)
+    type = Column(String(15))
+    value = Column(Float(10, 2))

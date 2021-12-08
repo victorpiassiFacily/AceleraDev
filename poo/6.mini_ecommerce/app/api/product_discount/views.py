@@ -3,10 +3,11 @@ from fastapi import APIRouter, status, Depends, HTTPException
 
 from app.repositories.product_discount_repository import ProductDiscountRepository
 from app.services.product_discount_service import ProductDiscountService
+from app.services.auth_service import only_admin, get_user
 from app.models.models import ProductDiscount
 from .schemas import ProductDiscountSchema, ShowProductDiscountSchema
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(only_admin)])
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
@@ -15,12 +16,7 @@ def create(
     service: ProductDiscountService = Depends(),
     repository: ProductDiscountRepository = Depends()
 ):
-    try:
-        service.check_discount(product_discount)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
-        )
+    service.check_discount(product_discount)
 
     repository.create(ProductDiscount(**product_discount.dict()))
 
