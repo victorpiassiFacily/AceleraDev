@@ -10,8 +10,8 @@ class UserService:
     def __init__(self, user_repository:   UserRepository = Depends()):
         self.user_repository = user_repository
 
-    def create_user(self, email, user: UserSchema):
-        email_DB = self.user_repository.find_by_email(email)
+    def create_user(self, user: UserSchema):
+        email_DB = self.user_repository.find_by_email(user.email)
         if email_DB:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
