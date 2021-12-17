@@ -1,5 +1,9 @@
 def main():
     numeros = [int(input(f"Insira o {x+1}o número: ")) for x in range(20)]
+    impar_ou_par(numeros)
+
+
+def impar_ou_par(numeros):
     impar = []
     par = []
 

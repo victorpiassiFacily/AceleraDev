@@ -1,10 +1,13 @@
 from datetime import date
 from pydantic import BaseModel
 
+from app.models.models import User
+
 
 class UserSchema(BaseModel):
     display_name = str
     email = str
+    password = str
 
 
 class UpdateCustomerSchema(BaseModel):
@@ -13,6 +16,7 @@ class UpdateCustomerSchema(BaseModel):
     birth_date: date
     phone_number: str
     genre: str
+    user: UserSchema
 
 
 class CustomerSchema(UpdateCustomerSchema):

@@ -35,6 +35,18 @@ class Data:
     def year(self, year):
         self._year = year
 
+    def valida_dia(self):
+        if self._day > 31:
+            raise Exception("Dia invalido! Digite um dia entre 1 e 31")
+
+    def valida_mes(self):
+        if self._month > 12:
+            raise Exception("Mes invalido! Digite um mes entre 1 e 12")
+
+    def valida_ano(self):
+        if self._year <= 0:
+            raise Exception("Ano invalido! Digite um ano maior que 0 ")
+
 
 data = Data(29, 11, 2021)
 print(data)

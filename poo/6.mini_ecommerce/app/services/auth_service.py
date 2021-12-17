@@ -4,6 +4,7 @@ from fastapi.security.oauth2 import OAuth2PasswordBearer, OAuth2PasswordRequestF
 import jwt
 import bcrypt
 from jwt.exceptions import ExpiredSignatureError
+from app.repositories.customer_repository import CustomerRepository
 
 from app.repositories.user_repository import UserRepository
 
@@ -20,7 +21,7 @@ def create_token(data: dict, expire_delta=None):
     if expire_delta:
         expire = datetime.utcnow() + expire_delta
     else:
-        expire = datetime.utcnow() + timedelta(seconds=2)
+        expire = datetime.utcnow() + timedelta(hours=60)
 
     payload.update({'exp': expire})
 
@@ -53,3 +54,13 @@ def only_admin(user=Depends(get_user)):
     if not user.role == 'admin':
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail='Allowed only for admin')
+
+
+def only_customer(user=Depends(get_user)):
+    if not user.role == 'customer':
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail='Allowed only for customer')
+
+
+def get_customer_user(user=Depends(get_user), customer_repository: CustomerRepository = Depends()):
+    return customer_repository.get_by_userid(user.id)
